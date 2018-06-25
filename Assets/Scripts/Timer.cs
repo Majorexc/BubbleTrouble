@@ -19,6 +19,11 @@ public class Timer : MonoBehaviour {
         StartTimer();
     }
 
+    public void Restart() {
+        StartTimer();
+    }
+    
+
     void StartTimer() {
         Debug.Assert(_timerCoroutine == null, $"[{GetType()}] Timer is already working", this);
         TimeStarted.Invoke(_gameDurationSeconds);

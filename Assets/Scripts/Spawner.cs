@@ -8,10 +8,11 @@ public class Spawner : MonoBehaviour {
     [SerializeField] Vector2 _spawnCooldownRange;
     [SerializeField] Vector2 _bubbleWidthRange;
     [SerializeField] Color[] _colors;
+    [SerializeField] float _bubbleBurstScore = 10;
     
     Coroutine _spawnCoroutine;
     
-    const float START_HEIGHT_POSITION = -4;
+    const float START_HEIGHT_POSITION = -10;
     const float OFFSET_MULTIPLIER = 6;
 
     void Awake() {
@@ -46,7 +47,7 @@ public class Spawner : MonoBehaviour {
 
     void SpawnBubble() {
         var spawnPositionInScreen = new Vector3(GetRandomWidthPositionInScreen(),
-                                                START_HEIGHT_POSITION, 
+                                                0, 
                                                 Camera.main.farClipPlane);
 
         var bubbleWidth = GetRandomBubbleWidth();
@@ -57,12 +58,13 @@ public class Spawner : MonoBehaviour {
         spawnPositionInScreen.x = Mathf.Clamp(spawnPositionInScreen.x, bubbleSize, Screen.width - (bubbleSize));
         
         var spawnPositionInWorld = Camera.main.ScreenToWorldPoint(spawnPositionInScreen);
+        spawnPositionInWorld.y = START_HEIGHT_POSITION;
         bubbleGameObject.transform.position = spawnPositionInWorld;
-        bubbleGameObject.GetComponent<Bubble>().Init(_startSpeed, bubbleWidth, GetRandomColor());
+        bubbleGameObject.GetComponent<Bubble>().Init(_startSpeed, bubbleWidth, GetRandomColor(), _bubbleBurstScore);
     }
     
     Color GetRandomColor() {
-        return Color.red;
+        return _colors[Random.Range(0, _colors.Length)];
     }
 
     float GetRandomBubbleWidth() {
@@ -74,8 +76,7 @@ public class Spawner : MonoBehaviour {
     }
 
     float GetRandomWidthPositionInScreen() {
-        // return Random.Range(0, Screen.width);
-        return 0;
+        return Random.Range(0, Screen.width);
     }
     
 }
