@@ -4,14 +4,14 @@ using System.Collections;
 using UnityEngine;
 
 public class Timer : MonoBehaviour {
+    [SerializeField] float _gameDurationSeconds = 20;
+    
     #region Static
 
     public static event Action<float> TimeStarted;
     public static event Action TimeEnded;
     
     #endregion
-
-    [SerializeField] float _gameDurationSeconds = 10;
 
     Coroutine _timerCoroutine;
     
@@ -20,7 +20,7 @@ public class Timer : MonoBehaviour {
     }
 
     void StartTimer() {
-        Debug.Assert(_timerCoroutine != null, $"[{GetType()}] Timer is already working", this);
+        Debug.Assert(_timerCoroutine == null, $"[{GetType()}] Timer is already working", this);
         TimeStarted.Invoke(_gameDurationSeconds);
         _timerCoroutine = StartCoroutine(TimerProgress(_gameDurationSeconds));
     }

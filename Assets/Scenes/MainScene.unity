@@ -208,7 +208,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1060955812}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2097928897}
@@ -256,6 +256,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73c9d1cdf9c2748ba9186329ca5c4b45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _commonBubble: {fileID: 1862769966769832, guid: 44f77fb9664764469bacd7afc7d8d2a9,
+    type: 2}
+  _startSpeed: 2
+  _spawnCooldownRange: {x: 0.5, y: 3}
+  _bubbleWidthRange: {x: 0.1, y: 2}
 --- !u!1 &2097928896
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,3 +301,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31fe684d13fec4692bc8e56a5306ace6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameDurationSeconds: 20
