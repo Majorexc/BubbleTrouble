@@ -54,6 +54,7 @@ public class Spawner : MonoBehaviour {
         var bubbleGameObject = Instantiate(_commonBubble, transform);
 
         // Simple hack to prevent out of bounds bubble spawning
+        // FIXME
         var bubbleSize = bubbleGameObject.GetComponent<SpriteRenderer>().size.x * bubbleWidth * OFFSET_MULTIPLIER;
         spawnPositionInScreen.x = Mathf.Clamp(spawnPositionInScreen.x, bubbleSize, Screen.width - (bubbleSize));
         

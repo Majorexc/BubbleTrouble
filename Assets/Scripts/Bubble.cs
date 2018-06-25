@@ -48,7 +48,7 @@ public class Bubble : MonoBehaviour {
     }
 
     void SetColor(Color color) {
-        _spriteRenderer.color = color;
+        _spriteRenderer.material.SetColor("_Color", color);
     }
 
     void OnMouseDown() {
