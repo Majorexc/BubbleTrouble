@@ -40,11 +40,7 @@ public class Bubble : MonoBehaviour {
     }
 
     void Move() {
-        transform.Translate(Vector3.up * _startSpeed * GetSpeedByTimeMultiplier() * Time.deltaTime);
-    }
-
-    float GetSpeedByTimeMultiplier() {
-        return 1;
+        transform.Translate(Vector3.up * _startSpeed * SpeedController.SpeedMultiplier * Time.deltaTime);
     }
 
     void SetColor(Color color) {

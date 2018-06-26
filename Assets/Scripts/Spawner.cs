@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 
 using UnityEngine;
+
+using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour {
     [SerializeField] GameObject _commonBubble;
@@ -9,15 +12,15 @@ public class Spawner : MonoBehaviour {
     [SerializeField] Vector2 _bubbleWidthRange;
     [SerializeField] Color[] _colors;
     [SerializeField] float _bubbleBurstScore = 10;
+    [SerializeField] float _offsetFromScreenBorder = 100;
     
     Coroutine _spawnCoroutine;
     
-    const float START_HEIGHT_POSITION = -10;
-    const float OFFSET_MULTIPLIER = 6;
+    const float START_Y_POSITION = -10;
 
     void Awake() {
-        Debug.Assert(_commonBubble != null, "[Spawner] No one bubble prefab found", this);
-        Debug.Assert(_colors != null && _colors.Length > 0, "[Spawner] Need to set at least one color", this);
+        Debug.Assert(_commonBubble != null, $"[{GetType()}] No one bubble prefab found", this);
+        Debug.Assert(_colors != null && _colors.Length > 0, $"[{GetType()}] Need to set at least one color", this);
     }
 
     void OnEnable() {
@@ -46,21 +49,11 @@ public class Spawner : MonoBehaviour {
     }
 
     void SpawnBubble() {
-        var spawnPositionInScreen = new Vector3(GetRandomWidthPositionInScreen(),
-                                                0, 
-                                                Camera.main.farClipPlane);
-
         var bubbleWidth = GetRandomBubbleWidth();
         var bubbleGameObject = Instantiate(_commonBubble, transform);
 
-        // Simple hack to prevent out of bounds bubble spawning
-        // FIXME
-        var bubbleSize = bubbleGameObject.GetComponent<SpriteRenderer>().size.x * bubbleWidth * OFFSET_MULTIPLIER;
-        spawnPositionInScreen.x = Mathf.Clamp(spawnPositionInScreen.x, bubbleSize, Screen.width - (bubbleSize));
         
-        var spawnPositionInWorld = Camera.main.ScreenToWorldPoint(spawnPositionInScreen);
-        spawnPositionInWorld.y = START_HEIGHT_POSITION;
-        bubbleGameObject.transform.position = spawnPositionInWorld;
+        bubbleGameObject.transform.position = GetRandomPosition();
         bubbleGameObject.GetComponent<Bubble>().Init(_startSpeed, bubbleWidth, GetRandomColor(), _bubbleBurstScore);
     }
     
@@ -76,8 +69,30 @@ public class Spawner : MonoBehaviour {
         return Random.Range(_spawnCooldownRange.x, _spawnCooldownRange.y);
     }
 
-    float GetRandomWidthPositionInScreen() {
-        return Random.Range(0, Screen.width);
+    Vector3 GetRandomPosition() {
+        var xPosInScreen = Random.Range(_offsetFromScreenBorder, Screen.width - _offsetFromScreenBorder);
+        
+        var spawnPositionInScreen = new Vector3(xPosInScreen,
+                                                0,
+                                                Camera.main.farClipPlane);
+        
+        var spawnPositionInWorld = Camera.main.ScreenToWorldPoint(spawnPositionInScreen);
+        spawnPositionInWorld.y = START_Y_POSITION;
+
+        return spawnPositionInWorld;
     }
-    
+
+    void OnDrawGizmos() {
+        Func<Vector3, Vector3> CameraToWorld = Camera.main.ScreenToWorldPoint;
+        
+        var upLeftPos = CameraToWorld(new Vector3(_offsetFromScreenBorder, Screen.height, Camera.main.farClipPlane));
+        var downLeftPos = CameraToWorld(new Vector3(_offsetFromScreenBorder, 0, Camera.main.farClipPlane));
+        
+        var upRightPos = CameraToWorld(new Vector3(Screen.width - _offsetFromScreenBorder, Screen.height, Camera.main.farClipPlane));
+        var downRightPos = CameraToWorld(new Vector3(Screen.width - _offsetFromScreenBorder, 0, Camera.main.farClipPlane));
+
+        Gizmos.DrawLine(upLeftPos, downLeftPos);
+        Gizmos.DrawLine(upRightPos, downRightPos);
+
+    }
 }
