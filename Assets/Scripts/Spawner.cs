@@ -5,18 +5,24 @@ using UnityEngine;
 
 using Random = UnityEngine.Random;
 
+/// <summary>
+/// Spawns bubbles
+/// </summary>
 public class Spawner : MonoBehaviour {
-    [SerializeField] GameObject _commonBubble;
-    [SerializeField] float _startSpeed = 5;
-    [SerializeField] Vector2 _spawnCooldownRange;
-    [SerializeField] Vector2 _bubbleWidthRange;
-    [SerializeField] Color[] _colors;
-    [SerializeField] float _bubbleBurstScore = 10;
-    [SerializeField] float _offsetFromScreenBorder = 100;
+    [SerializeField] GameObject _commonBubble;            ///< Common bubble prefab
+    [SerializeField] float _startSpeed = 5;               ///< Base speed of bubble 
+    [SerializeField] Vector2 _spawnCooldownRange;         ///< Cooldown between spawn iteration
+    [SerializeField] Vector2 _bubbleWidthRange;           ///< Spawn bubbles with this width range
+    [SerializeField] Color[] _colors;                     ///< Spawn bubbles with this colors
+    [SerializeField] float _bubbleBurstScore = 10;        ///< Common score of bubble to add
+    [SerializeField] float _offsetFromScreenBorder = 100; ///< Spawn offset from screen by x axis
     
     Coroutine _spawnCoroutine;
     
+    // Start spawn position by Y axis
     const float START_Y_POSITION = -10;
+    
+    #region Unity Messages
 
     void Awake() {
         Debug.Assert(_commonBubble != null, $"[{GetType()}] No one bubble prefab found", this);
@@ -32,6 +38,24 @@ public class Spawner : MonoBehaviour {
         Timer.TimeStarted -= OnTimeStarted;
         Timer.TimeEnded -= OnTimeEnded;
     }
+    
+    void OnDrawGizmos() {
+        // Just draw limition lines for debug
+        Func<Vector3, Vector3> CameraToWorld = Camera.main.ScreenToWorldPoint;
+        
+        var upLeftPos = CameraToWorld(new Vector3(_offsetFromScreenBorder, Screen.height, Camera.main.farClipPlane));
+        var downLeftPos = CameraToWorld(new Vector3(_offsetFromScreenBorder, 0, Camera.main.farClipPlane));
+        
+        var upRightPos = CameraToWorld(new Vector3(Screen.width - _offsetFromScreenBorder, Screen.height, Camera.main.farClipPlane));
+        var downRightPos = CameraToWorld(new Vector3(Screen.width - _offsetFromScreenBorder, 0, Camera.main.farClipPlane));
+
+        Gizmos.DrawLine(upLeftPos, downLeftPos);
+        Gizmos.DrawLine(upRightPos, downRightPos);
+    }
+    
+    #endregion
+
+    #region Event Handlers
 
     void OnTimeStarted(float duration) {
         _spawnCoroutine = StartCoroutine(Spawn());
@@ -40,13 +64,10 @@ public class Spawner : MonoBehaviour {
     void OnTimeEnded() {
         StopCoroutine(_spawnCoroutine);
     }
+    
+    #endregion
 
-    IEnumerator Spawn() {
-        while (true) {
-            SpawnBubble();
-            yield return new WaitForSeconds(GetSpawnCooldown());
-        }
-    }
+    #region Private Methods
 
     void SpawnBubble() {
         var bubbleWidth = GetRandomBubbleWidth();
@@ -81,18 +102,17 @@ public class Spawner : MonoBehaviour {
 
         return spawnPositionInWorld;
     }
+    
+    #endregion
+    
+    #region Private Coroutines
 
-    void OnDrawGizmos() {
-        Func<Vector3, Vector3> CameraToWorld = Camera.main.ScreenToWorldPoint;
-        
-        var upLeftPos = CameraToWorld(new Vector3(_offsetFromScreenBorder, Screen.height, Camera.main.farClipPlane));
-        var downLeftPos = CameraToWorld(new Vector3(_offsetFromScreenBorder, 0, Camera.main.farClipPlane));
-        
-        var upRightPos = CameraToWorld(new Vector3(Screen.width - _offsetFromScreenBorder, Screen.height, Camera.main.farClipPlane));
-        var downRightPos = CameraToWorld(new Vector3(Screen.width - _offsetFromScreenBorder, 0, Camera.main.farClipPlane));
-
-        Gizmos.DrawLine(upLeftPos, downLeftPos);
-        Gizmos.DrawLine(upRightPos, downRightPos);
-
+    IEnumerator Spawn() {
+        while (true) {
+            SpawnBubble();
+            yield return new WaitForSeconds(GetSpawnCooldown());
+        }
     }
+
+   #endregion
 }

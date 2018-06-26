@@ -1,7 +1,12 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Shows Restart button
+/// </summary>
 public class UIRestartHandler : MonoBehaviour {
     GameObject _button;
+
+    #region Unity Messages
     
     void Awake() {
         _button = transform.GetChild(0).gameObject;
@@ -17,6 +22,10 @@ public class UIRestartHandler : MonoBehaviour {
         Timer.TimeEnded -= OnTimerEnded;
     }
 
+    #endregion
+
+    #region Event Handlers
+    
     void OnTimerStarted(float time) {
         _button.SetActive(false);
     }
@@ -24,4 +33,6 @@ public class UIRestartHandler : MonoBehaviour {
     void OnTimerEnded() {
         _button.SetActive(true);        
     }
+
+    #endregion
 }

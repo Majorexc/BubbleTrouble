@@ -3,10 +3,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Updates timer visual
+/// </summary>
 [RequireComponent(typeof(Text))]
 public class UITimeHandler : MonoBehaviour {
 	Text _text;
 	Coroutine _timerCoroutine;
+	
+	#region Unity Messages
 	
 	void Awake() {
 		_text = GetComponent<Text>();
@@ -21,7 +26,12 @@ public class UITimeHandler : MonoBehaviour {
 		Timer.TimeStarted -= OnTimeStarted;
 		Timer.TimeEnded -= OnTimeEnded;
 	}
+	
+	#endregion
 
+	#region Event Handlers
+
+	
 	void OnTimeStarted(float time) {
 		_timerCoroutine = StartCoroutine(TimeCounter(time));
 	}
@@ -29,7 +39,11 @@ public class UITimeHandler : MonoBehaviour {
 	void OnTimeEnded() {
 		StopCoroutine(_timerCoroutine);
 	}
+	
+	#endregion
 
+	#region Coroutines
+	
 	IEnumerator TimeCounter(float time) {
 		var now = Time.time;
 		while (true) {
@@ -38,4 +52,6 @@ public class UITimeHandler : MonoBehaviour {
 			yield return null;
 		}
 	}
+	
+	#endregion
 }
